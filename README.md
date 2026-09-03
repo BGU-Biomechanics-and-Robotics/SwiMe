@@ -26,12 +26,12 @@ This copy was produced by:
 
 ## What doesn't work here (by nature of being static)
 
-- **Contact form** — visually intact, but submission is intercepted with a
-  small inline script and shows a "this is a static copy" message instead
-  of posting anywhere. No destination email was published anywhere on the
-  original page to wire up a `mailto:` fallback to; if you want the form to
-  actually deliver messages, point it at an email address or a form
-  service (e.g. Formspree) and I can wire that in.
+- **Contact form** — visually intact; submission is intercepted with a
+  small inline script and turned into a `mailto:` to `rriemer@bgu.ac.il`
+  (interim address, per team direction) pre-filled with the name/email/
+  message entered. This is a client-side redirect to the visitor's own
+  mail app, not a real send — if a proper inbox or form service (e.g.
+  Formspree) is set up later, this should be swapped for that.
 - **Login** (`/accounts/login/` on `swime.duckdns.org`) — external app link,
   kept as-is; unaffected by this being a static mirror.
 - **WordPress search, comments, admin, REST API** — not present in a static

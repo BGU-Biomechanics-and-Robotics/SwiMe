@@ -167,28 +167,44 @@ window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/15
 // Static-site export: the original Elementor Pro form posted to a
 // WordPress admin-ajax.php backend that does not exist on this static
 // GitHub Pages copy. The form is left in place visually; submission is
-// intercepted so it fails cleanly with a message instead of silently
-// posting nowhere. The form node is cloned and swapped in first, which
+// intercepted and turned into a mailto: to the team's interim contact
+// address instead. The form node is cloned and swapped in first, which
 // discards any submit listener Elementor's own bundled JS already
 // attached to it -- otherwise whichever listener happens to fire first
 // (registration order between this script and Elementor's own init is not
 // guaranteed) could still let the original AJAX submit handler run.
 document.addEventListener('DOMContentLoaded', function () {
+  var CONTACT_EMAIL = 'rriemer@bgu.ac.il';
   document.querySelectorAll('form.elementor-form').forEach(function (original) {
     var form = original.cloneNode(true);
     original.parentNode.replaceChild(form, original);
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       e.stopImmediatePropagation();
+      var name = (form.querySelector('[name="form_fields[name]"]') || {}).value || '';
+      var email = (form.querySelector('[name="form_fields[email]"]') || {}).value || '';
+      var message = (form.querySelector('[name="form_fields[message]"]') || {}).value || '';
+      var subject = 'SwiMe website contact form' + (name ? ' — ' + name : '');
+      var bodyLines = [];
+      if (name) bodyLines.push('Name: ' + name);
+      if (email) bodyLines.push('Email: ' + email);
+      bodyLines.push('');
+      bodyLines.push(message);
+      var mailto = 'mailto:' + CONTACT_EMAIL
+        + '?subject=' + encodeURIComponent(subject)
+        + '&body=' + encodeURIComponent(bodyLines.join('\n'));
       var msg = form.querySelector('.static-export-notice');
       if (!msg) {
         msg = document.createElement('div');
         msg.className = 'static-export-notice';
         msg.setAttribute('role', 'alert');
         msg.style.cssText = 'margin-top:12px;padding:10px 14px;border-radius:4px;background:#fff3cd;color:#664d03;border:1px solid #ffe69c;font-size:14px;';
-        msg.textContent = 'This is a static copy of the site — the contact form cannot send messages here.';
         form.appendChild(msg);
       }
+      msg.innerHTML = 'Opening your email app to send this to ' + CONTACT_EMAIL
+        + '. If nothing opens, email us directly at '
+        + '<a href="' + mailto + '" style="color:#664d03;text-decoration:underline;">' + CONTACT_EMAIL + '</a>.';
+      window.location.href = mailto;
     });
   });
 });
